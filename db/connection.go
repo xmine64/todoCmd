@@ -8,6 +8,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// CreateDB will create DataBase if not exist
 func CreateDB() {
 	file, err := os.Create("db/todoDB.db")
 	if err != nil {
@@ -17,6 +18,7 @@ func CreateDB() {
 	file.Close()
 }
 
+// CreateTable will create DataBase Table
 func CreateTable(db *sql.DB) {
 	createTodoTable := `CREATE TABLE todoTable(
 		"id" integer NOT NULL PRIMARY KEY ,
