@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 )
 
 func main() {
@@ -16,8 +15,8 @@ func main() {
 
 	// declare variables
 	var value, status string
-	status = os.Args[1]
-	value = os.Args[2]
+	status = "add" //os.Args[1]
+	value = "Hi"   //os.Args[2]
 
 	// open database
 	db, err := sql.Open("sqlite3", "db/todoDB.db")
@@ -28,6 +27,8 @@ func main() {
 
 	if status == "ADD" || status == "add" || status == "Add" {
 		cmd.AddObject(db, value)
+	} else if status == "SHOW" || status == "show" || status == "Show" {
+		cmd.Show(db)
 	}
 }
 

@@ -18,14 +18,16 @@ func CreateDB() {
 	file.Close()
 }
 
-// CreateTable will create DataBase Table
+// CreateTable will create DataBase Table if there's no db.
 func CreateTable(db *sql.DB) {
 	createTodoTable := `CREATE TABLE todoTable(
-		"id" integer NOT NULL PRIMARY KEY ,
-		"object" TEXT NOT NULL,
-		"time" TEXT NOT NULL,
-		"date" TEXT NOT NULL
-);`
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		object TEXT NOT NULL,
+		time TEXT NOT NULL,
+		date TEXT NOT NULL,
+		UNIQUE (id)
+);
+`
 
 	statement, err := db.Prepare(createTodoTable)
 	if err != nil {
