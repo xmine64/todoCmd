@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"time"
 
@@ -9,8 +10,8 @@ import (
 )
 
 func AddObject(db *sql.DB, object string) {
-	t := string(rune(time.Now().Hour())) + ":" + string(rune(time.Now().Minute())) + ":" + string(rune(time.Now().Second()))
-	date := string(rune(time.Now().Day())) + string(rune(time.Now().Month())) + string(rune(time.Now().Year()))
+	t := fmt.Sprintf("%v:%v:%v", time.Now().Hour(), time.Now().Minute(), time.Now().Second())
+	date := fmt.Sprintf("%v-%v-%v", time.Now().Day(), time.Now().Month(), time.Now().Year())
 
 	insertObject := `INSERT INTO todoTable(id, object, time, date) VALUES(?, ?, ?, ?)`
 	statement, err := db.Prepare(insertObject)
