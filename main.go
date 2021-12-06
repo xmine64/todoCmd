@@ -7,6 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -19,6 +20,7 @@ func main() {
 
 	status := os.Args[1]
 	value := os.Args[2]
+	id := 3
 
 	// open database
 	db, err := sql.Open("sqlite3", "db/todoDB.db")
@@ -33,6 +35,8 @@ func main() {
 		cmd.Show(db)
 	} else if status == "DELETE" || status == "Delete" || status == "delete" {
 		cmd.DeleteByID(db, value)
+	} else if status == "REPLACE" || status == "Replace" || status == "replace" {
+		cmd.ReplaceByID(db, value, strconv.Itoa(id))
 	}
 }
 
@@ -40,16 +44,13 @@ func main() {
 func start() string {
 	start :=
 		`
-  _______          _                           
- |__   __|        | |                          
-    | | ___     __| | ___     __ _ _ __  _ __  
-    | |/ _ \   / _'' |/ _ \   / _'' | '_ \| '_ \ 
-    | | (_) | | (_| | (_) | | (_| | |_) | |_) |
-    |_|\___/   \__,_|\___/   \__,_| .__/| .__/ 
-                                  | |   | |    
-                                  |_|   |_|
+   __            .___      
+_/  |_  ____   __| _/____  
+\   __\/  _ \ / __ |/  _ \ 
+ |  | (  <_> ) /_/ (  <_> )
+ |__|  \____/\____ |\____/ 
+                  \/
 
 `
-
 	return start
 }
