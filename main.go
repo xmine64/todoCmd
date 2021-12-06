@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 )
 
 func main() {
@@ -15,8 +16,8 @@ func main() {
 
 	// declare variables
 	var value, status string
-	status = "add" //os.Args[1]
-	value = "Hi"   //os.Args[2]
+	status = os.Args[1]
+	value = os.Args[2]
 
 	// open database
 	db, err := sql.Open("sqlite3", "db/todoDB.db")

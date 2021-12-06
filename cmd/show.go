@@ -12,6 +12,7 @@ func Show(db *sql.DB) {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
 	defer row.Close()
 	for row.Next() {
 		var id int
@@ -20,6 +21,7 @@ func Show(db *sql.DB) {
 		var date string
 
 		row.Scan(&id, &object, &time, &date)
-		fmt.Sprintf("Number :%v, object: %v, time added: %v, date added: %v", id, object, time, date)
+		log.Println(":", id, object, time, date)
+		fmt.Println("--------------------------------------")
 	}
 }
