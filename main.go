@@ -3,6 +3,7 @@ package main
 import (
 	"TodoCmd/cmd"
 	"database/sql"
+	"flag"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
@@ -17,10 +18,11 @@ func main() {
 	cmd.CheckFiles()
 
 	// declare variables
-
 	status := os.Args[1]
 	value := os.Args[2]
-	id := 3
+
+	var IdFlag = flag.Int("id", 0, "id for delete row ID parameter")
+	flag.Parse()
 
 	// open database
 	db, err := sql.Open("sqlite3", "db/todoDB.db")
@@ -36,7 +38,7 @@ func main() {
 	} else if status == "DELETE" || status == "Delete" || status == "delete" {
 		cmd.DeleteByID(db, value)
 	} else if status == "REPLACE" || status == "Replace" || status == "replace" {
-		cmd.ReplaceByID(db, value, strconv.Itoa(id))
+		cmd.ReplaceByID(db, value, strconv.Itoa(*IdFlag))
 	}
 }
 
