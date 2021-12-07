@@ -4,7 +4,6 @@ import (
 	"TodoCmd/cmd"
 	"database/sql"
 	"flag"
-	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"os"
@@ -12,17 +11,18 @@ import (
 )
 
 func main() {
-	fmt.Println(start())
+	// declare variables
+	status := os.Args[1]
+	if status == "" {
+		cmd.StartAscII()
+	}
+
+	var valueFlag = flag.String("value", "show", "it's just value dude :/")
+	var idFlag = flag.Int("id", 0, "id for delete row ID parameter")
+	flag.Parse()
 
 	//CheckFiles will checking database and log
 	cmd.CheckFiles()
-
-	// declare variables
-	status := os.Args[1]
-	value := os.Args[2]
-
-	var IdFlag = flag.Int("id", 0, "id for delete row ID parameter")
-	flag.Parse()
 
 	// open database
 	db, err := sql.Open("sqlite3", "db/todoDB.db")
@@ -32,27 +32,19 @@ func main() {
 	defer db.Close()
 
 	if status == "ADD" || status == "add" || status == "Add" {
-		cmd.AddObject(db, value)
+		cmd.AddAscII()
+		cmd.AddObject(db, *valueFlag)
+
 	} else if status == "SHOW" || status == "show" || status == "Show" {
+		cmd.ShowAscII()
 		cmd.Show(db)
+
 	} else if status == "DELETE" || status == "Delete" || status == "delete" {
-		cmd.DeleteByID(db, value)
+		cmd.DeleteAscII()
+		cmd.DeleteByID(db, *valueFlag)
+
 	} else if status == "REPLACE" || status == "Replace" || status == "replace" {
-		cmd.ReplaceByID(db, value, strconv.Itoa(*IdFlag))
+		cmd.ReplaceAscII()
+		cmd.ReplaceByID(db, *valueFlag, strconv.Itoa(*idFlag))
 	}
-}
-
-//start is some ASCII ART code to show when app is start
-func start() string {
-	start :=
-		`
-   __            .___      
-_/  |_  ____   __| _/____  
-\   __\/  _ \ / __ |/  _ \ 
- |  | (  <_> ) /_/ (  <_> )
- |__|  \____/\____ |\____/ 
-                  \/
-
-`
-	return start
 }
