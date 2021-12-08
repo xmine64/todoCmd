@@ -9,6 +9,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// AddObject will add task and insert into database
 func AddObject(db *sql.DB, object string) {
 	t := fmt.Sprintf("%v:%v:%v", time.Now().Hour(), time.Now().Minute(), time.Now().Second())
 	date := fmt.Sprintf("%v-%v-%v", time.Now().Day(), time.Now().Month(), time.Now().Year())

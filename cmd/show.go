@@ -7,6 +7,7 @@ import (
 	"log"
 )
 
+// Show will show your task u added!
 func Show(db *sql.DB) {
 	row, err := db.Query("SELECT * FROM todoTable")
 	if err != nil {

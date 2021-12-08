@@ -2,6 +2,10 @@ package cmd
 
 import "fmt"
 
+/*
+I write this ascII arts function for some more beautiful code
+*/
+
 func AddAscII() {
 	fmt.Print(`
 d888888P                dP              .d888888  888888ba  888888ba  
@@ -54,17 +58,4 @@ d888888P                dP                   dP          dP            dP
 	ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
 	`)
-}
-
-func StartAscII() {
-	fmt.Print(`
-d888888P                dP             
-   88                   88             
-   88    .d8888b. .d888b88 .d8888b.    
-   88    88'  '88 88'  '88 88'  '88    
-   88    88.  .88 88.  .88 88.  .88    
-   dP    '88888P' '88888P8 '88888P'
-ooooooooooooooooooooooooooooooooooooooo
-
-`)
 }

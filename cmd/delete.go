@@ -5,6 +5,7 @@ import (
 	"log"
 )
 
+// DeleteByID will delete Task by ID
 func DeleteByID(db *sql.DB, ID string) {
 	insertQuery := `DELETE FROM todoTable WHERE id = ?`
 	statement, err := db.Prepare(insertQuery)
