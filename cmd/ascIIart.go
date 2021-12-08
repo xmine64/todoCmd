@@ -59,3 +59,16 @@ d888888P                dP                   dP          dP            dP
 
 	`)
 }
+
+func FirstUse() {
+	fmt.Print(`
+d888888P                dP  
+   88                   88 
+   88    .d8888b. .d888b88 .d8888b. 
+   88    88'  '88 88'  '88 88'  '88
+   88    88.  .88 88.  .88 88.  .88
+   dP    '88888P' '88888P8 '88888P' 
+	ooooooooooooooooooooooooooooooo
+
+`)
+}

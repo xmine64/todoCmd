@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"TodoCmd/logger"
 	"database/sql"
 	"fmt"
 	"log"
@@ -18,10 +19,13 @@ func AddObject(db *sql.DB, object string) {
 	statement, err := db.Prepare(insertObject)
 	if err != nil {
 		log.Fatal(err.Error())
+		logger.AddLog(fmt.Sprintf("ERROR: error on insert object: %v", err.Error()))
 	}
 
 	_, err = statement.Exec(object, t, date)
+	logger.AddLog(fmt.Sprintf("AddObject used, value: %v", object))
 	if err != nil {
 		log.Fatal(err.Error())
+		logger.AddLog(fmt.Sprintf("ERROR: error on statement.Exec: %v", err.Error()))
 	}
 }

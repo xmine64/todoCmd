@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"TodoCmd/logger"
 	"database/sql"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
@@ -12,6 +13,7 @@ func Show(db *sql.DB) {
 	row, err := db.Query("SELECT * FROM todoTable")
 	if err != nil {
 		log.Fatal(err.Error())
+		logger.AddLog(fmt.Sprintf("ERROR: %v", err.Error()))
 	}
 
 	defer row.Close()
@@ -25,4 +27,6 @@ func Show(db *sql.DB) {
 		log.Println(":", id, object, time, date)
 		fmt.Println("--------------------------------------")
 	}
+
+	logger.AddLog("show function Used!")
 }
