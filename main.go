@@ -4,23 +4,26 @@ import (
 	"TodoCmd/cmd"
 	"database/sql"
 	"flag"
+	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
-	"os"
 	"strconv"
 )
 
 func main() {
 	// declare variables
-	status := os.Args[1]
-	if status == "" {
-		cmd.StartAscII()
-	}
+	var valueFlag string
+	var idFlag int
+	var statusFlag string
 
-	var valueFlag = flag.String("value", "show", "it's just value dude :/")
-	var idFlag = flag.Int("id", 0, "id for delete row ID parameter")
+	// Parsing Flags
+	flag.StringVar(&valueFlag, "object", "if you seen this, it means flag is not working", "it's just value dude :/")
+	flag.IntVar(&idFlag, "id", 0, "id for delete row ID parameter")
+	flag.StringVar(&statusFlag, "status", "show", "status will decide what do ")
 	flag.Parse()
+	flag.Args()
 
+	fmt.Println(valueFlag, idFlag)
 	//CheckFiles will checking database and log
 	cmd.CheckFiles()
 
@@ -31,20 +34,20 @@ func main() {
 	}
 	defer db.Close()
 
-	if status == "ADD" || status == "add" || status == "Add" {
+	if statusFlag == "ADD" || statusFlag == "add" || statusFlag == "Add" {
 		cmd.AddAscII()
-		cmd.AddObject(db, *valueFlag)
+		cmd.AddObject(db, valueFlag)
 
-	} else if status == "SHOW" || status == "show" || status == "Show" {
+	} else if statusFlag == "SHOW" || statusFlag == "show" || statusFlag == "Show" {
 		cmd.ShowAscII()
 		cmd.Show(db)
 
-	} else if status == "DELETE" || status == "Delete" || status == "delete" {
+	} else if statusFlag == "DELETE" || statusFlag == "Delete" || statusFlag == "delete" {
 		cmd.DeleteAscII()
-		cmd.DeleteByID(db, *valueFlag)
+		cmd.DeleteByID(db, strconv.Itoa(idFlag))
 
-	} else if status == "REPLACE" || status == "Replace" || status == "replace" {
+	} else if statusFlag == "REPLACE" || statusFlag == "Replace" || statusFlag == "replace" {
 		cmd.ReplaceAscII()
-		cmd.ReplaceByID(db, *valueFlag, strconv.Itoa(*idFlag))
+		cmd.ReplaceByID(db, valueFlag, strconv.Itoa(idFlag))
 	}
 }
