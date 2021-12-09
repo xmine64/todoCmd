@@ -74,9 +74,6 @@ d888888P                dP
    88    88.  .88 88.  .88 88.  .88
    dP    '88888P' '88888P8 '88888P'
    ooooooooooooooooooooooooooooooo // written by dozheiny
-
-PS C:\Users\dozhe\go\src\TodoCmd> go run main.go -help
-Usage of C:\Users\dozhe\AppData\Local\Temp\go-build1797785965\b001\exe\main.exe:
   -id int
         ID is your task id
   -object string
