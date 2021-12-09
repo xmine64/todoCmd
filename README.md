@@ -20,10 +20,10 @@ delete some ascII art
 
 install Golang on your os
 
-###windows:
+### windows:
 download Golang latest version on https://go.dev
 
-###Linux:
+### Linux:
 open your terminal and :
  
 ```sudo yum install golang```
