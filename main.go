@@ -24,9 +24,9 @@ func main() {
 	// P.S: this shit didn't fix from go v1.13
 
 	// Parsing Flags
-	flag.StringVar(&valueFlag, "object", "if you seen this, it means flag is not working", "it's just value dude :/")
-	flag.IntVar(&idFlag, "id", 0, "id for delete row ID parameter")
-	flag.StringVar(&statusFlag, "status", "hi", "status will decide what do ")
+	flag.StringVar(&valueFlag, "object", "if you seen this, it means flag is not working", "object problaly is your task name")
+	flag.IntVar(&idFlag, "id", 0, "ID is your task id ")
+	flag.StringVar(&statusFlag, "status", "hi", "status will decide what you want to do ")
 
 	flag.Parse()
 	flag.Args()
@@ -41,29 +41,40 @@ func main() {
 	defer db.Close()
 
 	if statusFlag == "ADD" || statusFlag == "add" || statusFlag == "Add" {
-		cmd.AddAscII()
 		cmd.AddObject(db, valueFlag)
 
 		fmt.Println(fmt.Sprintf("CONSOLE: %v added into database successfully", valueFlag))
 
 	} else if statusFlag == "SHOW" || statusFlag == "show" || statusFlag == "Show" {
-		cmd.ShowAscII()
 		cmd.Show(db)
 
 	} else if statusFlag == "DELETE" || statusFlag == "Delete" || statusFlag == "delete" {
-		cmd.DeleteAscII()
 		cmd.DeleteByID(db, strconv.Itoa(idFlag))
 
 		fmt.Println(fmt.Sprintf("%v ID sucessfully deleted", idFlag))
 
 	} else if statusFlag == "REPLACE" || statusFlag == "Replace" || statusFlag == "replace" {
-		cmd.ReplaceAscII()
 		cmd.ReplaceByID(db, valueFlag, strconv.Itoa(idFlag))
 
 		fmt.Println(fmt.Sprintf("%v ID successfully replace , new Value: %v", idFlag, valueFlag))
 
 	} else {
-		cmd.FirstUse()
+		ascII()
 		cmd.CheckFiles()
 	}
+}
+
+func ascII() {
+	fmt.Print(`
+d888888P                dP  
+   88                   88 
+   88    .d8888b. .d888b88 .d8888b. 
+   88    88'  '88 88'  '88 88'  '88
+   88    88.  .88 88.  .88 88.  .88
+   dP    '88888P' '88888P8 '88888P' 
+   ooooooooooooooooooooooooooooooo // written by dozheiny
+
+CONSOLE : for see help, type ./todocmd -help
+
+`)
 }
