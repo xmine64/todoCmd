@@ -82,7 +82,7 @@ d888888P                dP
         status will decide what you want to do  (default "hi")
 ```
 
-###ADD 👨‍💻:
+### ADD 👨‍💻:
 
 for add task:
 
