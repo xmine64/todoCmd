@@ -33,6 +33,11 @@ func main() {
 			},
 		},
 		Before: func(c *cli.Context) error {
+			if c.NArg() < 1 {
+				ascII()
+				os.Exit(1)
+			}
+
 			// create required files if they don't exist
 			if err := cmd.CheckFiles(dbPath); err != nil {
 				return err
@@ -56,18 +61,14 @@ func main() {
 			}
 			return nil
 		},
-		Action: func(c *cli.Context) error {
-			// show ascii art when launched with no arguments
-			if c.NArg() == 0 {
-				ascII()
-			}
-			return nil
-		},
 		ExitErrHandler: func(context *cli.Context, err error) {
 			if err != nil {
 				logger.AddLog(fmt.Sprintf("ERORR: %v", err.Error()))
 				log.Fatal(err)
 			}
+		},
+		CommandNotFound: func(c *cli.Context, s string) {
+			log.Fatalf(`command "%s" not found`, s)
 		},
 		Commands: []*cli.Command{
 			{
