@@ -2,65 +2,166 @@ package main
 
 import (
 	"TodoCmd/cmd"
+	"TodoCmd/db"
 	"TodoCmd/logger"
 	"database/sql"
-	"flag"
 	"fmt"
-	_ "github.com/mattn/go-sqlite3"
 	"log"
-	"strconv"
+	"os"
+
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/urfave/cli/v2"
 )
 
 func main() {
-
-	// declare variables
-	var valueFlag string
+	var database *sql.DB
+	var dbPath string
+	var objectFlag string
 	var idFlag int
-	var statusFlag string
 
-	// Note: Probably you ask yourself why I didn't use os.Args and use flags
-	// so , I tell u this, go is shit in os.Args and flag same time , and it didn't work
-	// I will update and commit when go fix this shit
-	// P.S: this shit didn't fix from go v1.13
+	app := &cli.App{
+		Name:  "todoCmd",
+		Usage: "Manage your tasks",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "db",
+				Usage:       "Database path",
+				Value:       "db/todoDB.db",
+				TakesFile:   true,
+				EnvVars:     []string{"TODOCMD_DB"},
+				Destination: &dbPath,
+			},
+		},
+		Before: func(c *cli.Context) error {
+			// create required files if they don't exist
+			if err := cmd.CheckFiles(dbPath); err != nil {
+				return err
+			}
 
-	// Parsing Flags
-	flag.StringVar(&valueFlag, "object", "if you seen this, it means flag is not working", "object problaly is your task name")
-	flag.IntVar(&idFlag, "id", 0, "ID is your task id ")
-	flag.StringVar(&statusFlag, "status", "hi", "status will decide what you want to do ")
+			// open database
+			var err error
+			if database, err = sql.Open("sqlite3", dbPath); err != nil {
+				return err
+			}
 
-	flag.Parse()
-	flag.Args()
+			// create table if required
+			db.CreateTable(database)
 
-	// open database
-	db, err := sql.Open("sqlite3", "db/todoDB.db")
-	if err != nil {
-		log.Fatal(err.Error())
-		logger.AddLog(fmt.Sprintf("ERORR: %v", err.Error()))
+			return nil
+		},
+		After: func(c *cli.Context) error {
+			// close database on exit
+			if err := database.Close(); err != nil {
+				return err
+			}
+			return nil
+		},
+		Action: func(c *cli.Context) error {
+			// show ascii art when launched with no arguments
+			if c.NArg() == 0 {
+				ascII()
+			}
+			return nil
+		},
+		ExitErrHandler: func(context *cli.Context, err error) {
+			if err != nil {
+				logger.AddLog(fmt.Sprintf("ERORR: %v", err.Error()))
+				log.Fatal(err)
+			}
+		},
+		Commands: []*cli.Command{
+			{
+				Name:      "add",
+				ArgsUsage: "-object <object>",
+				Aliases:   []string{"a"},
+				Usage:     "Add a task",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:        "object",
+						Aliases:     []string{"o"},
+						Usage:       "task content",
+						Required:    true,
+						TakesFile:   false,
+						Destination: &objectFlag,
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if err := cmd.AddObject(database, objectFlag); err != nil {
+						return err
+					}
+					fmt.Println(fmt.Sprintf("CONSOLE: %v added into database successfully", objectFlag))
+					return nil
+				},
+			},
+			{
+				Name:      "show",
+				ArgsUsage: "",
+				Aliases:   []string{"print", "s"},
+				Usage:     "Show tasks",
+				Action: func(c *cli.Context) error {
+					if err := cmd.Show(database); err != nil {
+						return err
+					}
+					return nil
+				},
+			},
+			{
+				Name:      "delete",
+				ArgsUsage: "-id <id>",
+				Aliases:   []string{"complete", "remove", "del", "rm", "d"},
+				Usage:     "Delete a task",
+				Flags: []cli.Flag{
+					&cli.IntFlag{
+						Name:        "id",
+						Usage:       "task id",
+						DefaultText: "",
+						Required:    true,
+						Destination: &idFlag,
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if err := cmd.DeleteByID(database, idFlag); err != nil {
+						return err
+					}
+					fmt.Println(fmt.Sprintf("%v ID sucessfully deleted", idFlag))
+					return nil
+				},
+			},
+			{
+				Name:      "replace",
+				ArgsUsage: "-id <id> -object <object>",
+				Usage:     "Replace a task with something else",
+				Aliases:   []string{"edit", "r"},
+				Flags: []cli.Flag{
+					&cli.IntFlag{
+						Name:        "id",
+						Usage:       "task id",
+						DefaultText: "",
+						Required:    true,
+						Destination: &idFlag,
+					},
+					&cli.StringFlag{
+						Name:        "object",
+						Aliases:     []string{"o"},
+						Usage:       "task content",
+						Required:    true,
+						TakesFile:   false,
+						Destination: &objectFlag,
+					},
+				},
+				Action: func(c *cli.Context) error {
+					if err := cmd.ReplaceByID(database, objectFlag, idFlag); err != nil {
+						return err
+					}
+					fmt.Println(fmt.Sprintf("%v ID successfully replace , new Value: %v", idFlag, objectFlag))
+					return nil
+				},
+			},
+		},
 	}
-	// Use defer for closing when program is done.
-	defer db.Close()
 
-	if statusFlag == "ADD" || statusFlag == "add" || statusFlag == "Add" {
-		cmd.AddObject(db, valueFlag)
-
-		fmt.Println(fmt.Sprintf("CONSOLE: %v added into database successfully", valueFlag))
-
-	} else if statusFlag == "SHOW" || statusFlag == "show" || statusFlag == "Show" {
-		cmd.Show(db)
-
-	} else if statusFlag == "DELETE" || statusFlag == "Delete" || statusFlag == "delete" {
-		cmd.DeleteByID(db, strconv.Itoa(idFlag))
-
-		fmt.Println(fmt.Sprintf("%v ID sucessfully deleted", idFlag))
-
-	} else if statusFlag == "REPLACE" || statusFlag == "Replace" || statusFlag == "replace" {
-		cmd.ReplaceByID(db, valueFlag, strconv.Itoa(idFlag))
-
-		fmt.Println(fmt.Sprintf("%v ID successfully replace , new Value: %v", idFlag, valueFlag))
-
-	} else {
-		ascII()
-		cmd.CheckFiles()
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
 	}
 }
 

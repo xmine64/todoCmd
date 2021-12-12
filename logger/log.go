@@ -2,7 +2,6 @@ package logger
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 )
@@ -11,7 +10,7 @@ import (
 func AddLog(text string) {
 	file, err := os.OpenFile(".log", os.O_RDWR|os.O_APPEND, 0660)
 	if err != nil {
-		log.Fatal(err)
+		//log.Fatal(err)
 		return
 	}
 
@@ -20,7 +19,7 @@ func AddLog(text string) {
 
 	_, err = file.WriteString(fmt.Sprintf("[%v] %v \n", time.Now(), text))
 	if err != nil {
-		log.Fatal(err)
+		//log.Fatal(err)
 		return
 	}
 }

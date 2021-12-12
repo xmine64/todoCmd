@@ -2,34 +2,28 @@ package cmd
 
 import (
 	"TodoCmd/db"
-	"database/sql"
 	"fmt"
-	"log"
 	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 // CheckFiles will check your db and log are existed or not; if not exist , will create Database and Table
-func CheckFiles() {
-	_, err := os.Stat("db/todoDB.db")
-	if os.IsNotExist(err) {
-		db.CreateDB()
-		sqLiteDB, _ := sql.Open("sqlite3", "db/todoDB.db")
-
-		defer func(sqLiteDB *sql.DB) {
-			err := sqLiteDB.Close()
-			if err != nil {
-				log.Fatal(err.Error())
-			}
-
-		}(sqLiteDB)
-
-		db.CreateTable(sqLiteDB)
+func CheckFiles(dbPath string) error {
+	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+		if err := db.CreateDB(dbPath); err != nil {
+			return err
+		}
 	}
-	_, err = os.Stat(".log")
-	if os.IsNotExist(err) {
-		os.Create(".log")
+
+	if _, err := os.Stat(".log"); os.IsNotExist(err) {
+		file, err := os.Create(".log")
+		if err != nil {
+			return err
+		}
+		file.Close()
 		fmt.Printf("CONSOLE: .log created!\n")
 	}
+
+	return nil
 }

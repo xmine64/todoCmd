@@ -11,20 +11,21 @@ import (
 )
 
 // CreateDB will create DataBase if not exist
-func CreateDB() {
-	file, err := os.Create("db/todoDB.db")
+func CreateDB(dbPath string) error {
+	file, err := os.Create(dbPath)
 	if err != nil {
-		logger.AddLog(fmt.Sprintf("ERROR: %v", err.Error()))
-		log.Fatal(err.Error())
+		logger.AddLog(fmt.Sprintf("ERROR: CreateDB %v", err.Error()))
+		return err
 	}
 
 	file.Close()
 	fmt.Println("CONSOLE: Create database successfully")
+	return nil
 }
 
 // CreateTable will create DataBase Table if there's no db.
-func CreateTable(db *sql.DB) {
-	createTodoTable := `CREATE TABLE todoTable(
+func CreateTable(db *sql.DB) error {
+	createTodoTable := `CREATE TABLE IF NOT EXISTS todoTable(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		object TEXT NOT NULL,
 		time TEXT NOT NULL,
@@ -36,8 +37,12 @@ func CreateTable(db *sql.DB) {
 	statement, err := db.Prepare(createTodoTable)
 	if err != nil {
 		log.Fatal(err.Error())
+		return err
 	}
 
-	statement.Exec()
-	fmt.Println("CONSOLE: Create Table successfully")
+	if _, err := statement.Exec(); err != nil {
+		return err
+	}
+
+	return nil
 }
